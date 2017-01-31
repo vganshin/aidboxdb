@@ -63,9 +63,9 @@ RUN	cd /usr/src/postgresql && mkdir contrib/rum \
 RUN export CXX="g++-4.8" CC="gcc-4.8" LD="g++-4.8" \
   && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90 \
   && cd /usr/src/postgresql/contrib \
-  && wget https://github.com/plv8/plv8/archive/v1.5.5.tar.gz \
-  && tar -xvzf v1.5.5.tar.gz \
-  && cd plv8-1.5.5 \
+  && git clone https://github.com/plv8/plv8 \
+  && cd plv8 \
+  && git checkout e1c97ed4694b27fac2905dfa86c894f5407a9b86 \
   && export PATH=/pg/bin:$PATH \
   && make static \
   && make install
