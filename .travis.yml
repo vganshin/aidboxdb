@@ -10,4 +10,7 @@ go:
 
 before_install:
   - curl -SL https://github.com/grammarly/rocker/releases/download/1.3.0/rocker_linux_amd64.tar.gz | tar -xzC /tmp
-  - sudo cp /tmp/rocker /usr/local/bin/rocker && chmod +x /usr/local/bin/rocker
+  - sudo cp /tmp/rocker /usr/local/bin/rocker && sudo chmod +x /usr/local/bin/rocker
+
+script:
+  - rocker -h
