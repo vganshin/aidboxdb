@@ -43,7 +43,7 @@ RUN	cd /usr/src/postgresql && mkdir contrib/rum \
 	&& make -j "$(getconf _NPROCESSORS_ONLN)" install \
   && ls /usr/src/postgresql
 
-RUN apt-get install -y python libedit-dev g++-4.8
+RUN apt-get install -y clang-3.5 llvm-3.5-dev libedit-dev g++-4.8
 
 RUN export CXX="g++-4.8" CC="gcc-4.8" LD="g++-4.8" \
   && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90 \
