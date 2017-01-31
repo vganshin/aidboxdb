@@ -59,11 +59,9 @@ RUN	cd /usr/src/postgresql && mkdir contrib/rum \
 	&& make -j "$(getconf _NPROCESSORS_ONLN)" install \
   && ls /usr/src/postgresql
 
-
 RUN apt-get install -y clang-3.5 llvm-3.5-dev libedit-dev \
-  && apt-get install -qq g++-4.8
+  && apt-get install -qq g++-4.8 
 
-#  && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90 \
 
 ENV v8 5.1.281.14
 
@@ -72,9 +70,11 @@ RUN cd /tmp && git clone --depth 1 https://chromium.googlesource.com/chromium/to
   && fetch v8; cd v8 \
   && git checkout $v8 && gclient sync > /dev/null \
   && git describe --always \
+  && export CXX="g++-4.8" && export CC="gcc-4.8" && export LD="g++-4.8" \
+  && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90 \
+  && echo "make deps" \
   && make dependencies > /dev/null || true \
-  && export CXX=clang++ \
-  && export LD=clang++ \
+  && echo "make libv8" \
   && make native library=shared -j8 werror=no snapshot=off i18nsupport=off \
   && sudo cp -rf include/* /usr/include \
   && sudo cp -rf include /usr/include \
