@@ -61,22 +61,23 @@ RUN apt-get install -y python libedit-dev g++-4.8
 
 ENV v8=5.1.281.14
 
-RUN cd /tmp && git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git \
-  && export PATH="$PATH":`pwd`/depot_tools \
-  && fetch v8; cd v8 \
-  && git checkout $v8 && gclient sync > /dev/null \
-  && git describe --always \
-  && export CXX="g++-4.8" && export CC="gcc-4.8" && export LD="g++-4.8" \
-  && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90 \
-  && echo "make deps" \
-  && make dependencies > /dev/null || true \
-  && echo "make libv8" \
-  && make native library=shared -j8 werror=no snapshot=off i18nsupport=off \
-  && sudo cp -rf include/* /usr/include \
-  && sudo cp -rf include /usr/include \
-  && sudo install -v --mode=0644 out/native/lib.target/* /usr/lib \
-  && sudo install -v out/native/d8 /usr/bin/ \
-  && sudo install out/native/obj.target/tools/gyp/*.a /usr/lib \
+RUN cd /tmp
+  # && git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git \
+  # && export PATH="$PATH":`pwd`/depot_tools \
+  # && fetch v8; cd v8 \
+  # && git checkout $v8 && gclient sync > /dev/null \
+  # && git describe --always \
+  # && export CXX="g++-4.8" && export CC="gcc-4.8" && export LD="g++-4.8" \
+  # && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90 \
+  # && echo "make deps" \
+  # && make dependencies > /dev/null || true \
+  # && echo "make libv8" \
+  # && make native library=shared -j8 werror=no snapshot=off i18nsupport=off \
+  # && sudo cp -rf include/* /usr/include \
+  # && sudo cp -rf include /usr/include \
+  # && sudo install -v --mode=0644 out/native/lib.target/* /usr/lib \
+  # && sudo install -v out/native/d8 /usr/bin/ \
+  # && sudo install out/native/obj.target/tools/gyp/*.a /usr/lib \
   && cd /usr/src/postgresql/contrib \
   && git clone https://github.com/plv8/plv8 \
   && cd plv8 \
