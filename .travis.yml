@@ -2,6 +2,7 @@ sudo: required
 dist: trusty
 
 language: generic
+
 services:
   - docker
 
@@ -10,4 +11,4 @@ before_install:
   - sudo cp /tmp/rocker /usr/local/bin/rocker && sudo chmod +x /usr/local/bin/rocker
 
 script:
-  - rocker -h
+  - rocker build
