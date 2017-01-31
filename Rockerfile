@@ -27,8 +27,6 @@ RUN apt-get install -y \
   libreadline-dev \
   zlib1g-dev \
   libssl-dev \
-  clang-3.5 \
-  llvm-3.5-dev \
   libedit-dev \
   g++-4.8
 
@@ -61,8 +59,7 @@ RUN	cd /usr/src/postgresql && mkdir contrib/rum \
 
 RUN apt-get install -y python libedit-dev g++-4.8
 
-
-ENV v8 5.1.281.14
+ENV v8=5.1.281.14
 
 RUN cd /tmp && git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git \
   && export PATH="$PATH":`pwd`/depot_tools \
