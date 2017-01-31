@@ -103,6 +103,7 @@ EXPORT /pg
 EXPORT /usr/lib/libv8.so libv8.so
 
 ENV GOSU_VERSION 1.9
+
 RUN set -x \
     && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
     && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
@@ -140,7 +141,6 @@ RUN mkdir /data && chown postgres:postgres /data
 ENV PATH /pg/bin:$PATH
 ENV PGDATA /data
 
-
 COPY docker-entrypoint.sh /
 
 VOLUME /data
@@ -151,4 +151,4 @@ EXPOSE 5432
 
 CMD ["postgres"]
 
-PUSH docker/aidboxdb
+PUSH aidbox/aidboxdb:{{ .Version }}
