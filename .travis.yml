@@ -7,7 +7,7 @@ before_install:
 - curl -SL https://github.com/grammarly/rocker/releases/download/1.3.0/rocker_linux_amd64.tar.gz
   | tar -xzC /tmp
 - sudo cp /tmp/rocker /usr/local/bin/rocker && sudo chmod +x /usr/local/bin/rocker
-- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+- docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD";
 script:
 - v=`git rev-parse HEAD` && rocker build --var Version="$v" --push
 afrer_success: 
