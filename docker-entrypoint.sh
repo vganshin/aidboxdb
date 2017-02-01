@@ -39,7 +39,7 @@ if [ ! -s "/data/PG_VERSION" ]; then
   chown -R postgres /data
 
 	file_env 'POSTGRES_INITDB_ARGS'
-	su - postgres -c "/pg/bin/pg_ctl initdb --data-checksums -E 'UTF-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8' -D /data"
+	su - postgres -c "/pg/bin/initdb --data-checksums -E 'UTF-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8' -D /data"
 
 	# check password first so we can output the warning before postgres
 	# messes it up

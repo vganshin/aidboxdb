@@ -6,7 +6,6 @@ Based on PostgreSQL Pro version of PostgreSQL.
 Build by rocker see Rockerfile
 
 
-
 Includes:
 
 * rum
