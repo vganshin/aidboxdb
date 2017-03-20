@@ -1,6 +1,6 @@
 FROM aidbox/postgrespro-plv8:9.6.1.2-1.5.5
 
-ENV FHIRPATH_VERSION be495b991dac247a43c9dee9c1b9144c6e7b12d1
+ENV FHIRPATH_VERSION f52262ea6a4cfce71dd43e1b2aed80924a650a83
 
 RUN	cd /usr/src/postgresql/contrib \
   && git clone https://github.com/niquola/fhirpath-pg  \
