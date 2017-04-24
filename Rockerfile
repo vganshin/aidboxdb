@@ -8,6 +8,14 @@ RUN	cd /usr/src/postgresql/contrib \
   && git checkout $FHIRPATH_VERSION \ 
 	&& make && make install
 
+ENV JSONKNIFE_VERSION e8bf5660ca947690f266eeae3cf7cc86da5192ff
+
+RUN	cd /usr/src/postgresql/contrib \
+  && git clone https://github.com/niquola/jsonknife  \
+	&& cd jsonknife \
+  && git checkout $JSONKNIFE_VERSION \ 
+	&& make && make install
+
 EXPORT /pg
 EXPORT /usr/lib/libv8.so libv8.so
 
