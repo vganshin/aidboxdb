@@ -1,20 +1,10 @@
 FROM aidbox/postgrespro-plv8:9.6.1.2-1.5.5
 
-ENV FHIRPATH_VERSION f52262ea6a4cfce71dd43e1b2aed80924a650a83
+ENV JSONKNIFE_VERSION 9142a222fb139c652e82130d87471d4473b173ab
 
-RUN	cd /usr/src/postgresql/contrib \
-  && git clone https://github.com/niquola/fhirpath-pg  \
-	&& cd fhirpath-pg \
-  && git checkout $FHIRPATH_VERSION \ 
-	&& make && make install
-
-ENV JSONKNIFE_VERSION e8bf5660ca947690f266eeae3cf7cc86da5192ff
-
-RUN	cd /usr/src/postgresql/contrib \
-  && git clone https://github.com/niquola/jsonknife  \
-	&& cd jsonknife \
-  && git checkout $JSONKNIFE_VERSION \ 
-	&& make && make install
+RUN cd /usr/src/postgresql/contrib \
+  && git clone https://github.com/niquola/jsonknife  && cd jsonknife \
+  && git checkout $JSONKNIFE_VERSION && make && make install
 
 EXPORT /pg
 EXPORT /usr/lib/libv8.so libv8.so
