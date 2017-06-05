@@ -13,7 +13,7 @@ ENV LANG en_US.utf8
 RUN mkdir /docker-entrypoint-initdb.d
 
 ENV PG_MAJOR 9.6
-ENV PGPRO_VERSION 9.6.1.2
+ENV PGPRO_VERSION  9.6.3.1
 ENV PG_SHA256 6911ba75a5dff747d8edd7d501c97dcb1d3c2a41733998f1b2332d37f9879bd0
 
 RUN apt-get install -y \
@@ -31,7 +31,6 @@ RUN apt-get install -y \
   g++-4.8
 
 RUN wget -O postgresql.tar.bz2 "http://repo.postgrespro.ru/pgpro-$PG_MAJOR/src/postgrespro-$PGPRO_VERSION.tar.bz2" \
-  && echo "$PG_SHA256 *postgresql.tar.bz2" | sha256sum -c - \
 	&& mkdir -p /usr/src/postgresql \
 	&& tar \
 		--extract \
@@ -60,4 +59,4 @@ RUN	cd /usr/src/postgresql && mkdir contrib/rum \
 
 EXPORT /pg
 
-PUSH aidbox/postgrespro:9.6.1.2
+PUSH aidbox/postgrespro:9.6.3.1

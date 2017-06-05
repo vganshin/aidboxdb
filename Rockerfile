@@ -1,4 +1,4 @@
-FROM aidbox/postgrespro-plv8:9.6.1.2-1.5.5
+FROM aidbox/postgrespro-plv8:9.6.3.1-1.5.5
 
 ENV JSONKNIFE_VERSION 9142a222fb139c652e82130d87471d4473b173ab
 

@@ -1,4 +1,4 @@
-FROM aidbox/postgrespro:9.6.1.2
+FROM aidbox/postgrespro:9.6.3.1
 
 RUN apt-get update
 RUN apt-get install -y python libedit-dev g++-4.8
@@ -33,4 +33,4 @@ RUN cd /tmp/v8 \
 EXPORT /pg
 EXPORT /usr/lib/libv8.so libv8.so
 
-PUSH aidbox/postgrespro-plv8:9.6.1.2-1.5.5
+PUSH aidbox/postgrespro-plv8:9.6.3.1-1.5.5

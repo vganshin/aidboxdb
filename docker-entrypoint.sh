@@ -60,6 +60,8 @@ if [ ! -s "/data/PG_VERSION" ]; then
 		shared_preload_libraries='pg_pathman'
 		synchronous_commit = off
 		shared_buffers = '2GB'
+    wal_level = logical
+    max_wal_senders = 10
 		max_wal_size = '4GB'
 	CONF
 
@@ -84,5 +86,3 @@ if [ "$1" = 'postgres' ] && [ "$(id -u)" = '0' ]; then
 else
     exec "$@"
 fi
-
-
