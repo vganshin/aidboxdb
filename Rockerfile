@@ -34,7 +34,7 @@ FROM debian:jessie
 
 IMPORT /pg
 IMPORT libv8.so /usr/lib/libv8.so
-IMPORT wal2json.so /usr/lib/wal2json.so
+IMPORT wal2json.so /pg/lib/postgresql/wal2json.so
 IMPORT gosu /usr/local/bin/gosu
 
 

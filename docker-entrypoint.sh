@@ -48,11 +48,16 @@ if [ ! -s "/data/PG_VERSION" ]; then
   authMethod=md5
 
   { echo; echo "host all all all $authMethod"; } | tee -a "$PGDATA/pg_hba.conf" > /dev/null
+  { echo; echo "host replication postgres 0.0.0.0/0 $authMethod"; } | tee -a "$PGDATA/pg_hba.conf" > /dev/null
 
 	su - postgres -c '/pg/bin/pg_ctl -D /data  -w start'
 	su - postgres -c '/pg/bin/createuser -s root'
 
   echo "ALTER USER postgres WITH SUPERUSER $pass" | /pg/bin/psql postgres
+
+  if [ -n "$POSTGRES_DB" ]; then
+      /pg/bin/psql postgres -c "create database $POSTGRES_DB"
+  fi
 
 	# Some tweaks to default configuration
 	cat <<-CONF >> /data/postgresql.conf
@@ -61,7 +66,8 @@ if [ ! -s "/data/PG_VERSION" ]; then
 		synchronous_commit = off
 		shared_buffers = '2GB'
     wal_level = logical
-    max_wal_senders = 10
+    max_wal_senders = 30
+    max_replication_slots = 30
 		max_wal_size = '4GB'
 	CONF
 
@@ -73,6 +79,7 @@ if [ ! -s "/data/PG_VERSION" ]; then
 	echo 'PostgreSQL init process complete; ready for start up.'
 	echo
 fi
+
 
 # allow the container to be started with `--user`
 if [ "$1" = 'postgres' ] && [ "$(id -u)" = '0' ]; then
