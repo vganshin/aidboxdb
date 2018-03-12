@@ -121,8 +121,9 @@ RUN cd /pg-src/postgres/contrib/ \
    && export DEPOT_TOOLS_WIN_TOOLCHAIN=0 \
    && git clone -b v2.3.0 --depth=1 https://github.com/plv8/plv8 \
    && cd plv8 \
-   && PATH=/pg/bin:$PATH \
-   && make PG_CONFIG=/pg/bin/pg_config \
+   && export PATH=/pg/bin:$PATH \
+   && export PG_CONFIG=/pg/bin/pg_config \
+   && make || make || make \
    && make install
 
 RUN mkdir /data && chown postgres /data
