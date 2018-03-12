@@ -102,31 +102,31 @@ RUN cd /pg-src/postgres/contrib/ \
    && make \
    && make install
 
-RUN set -ex && apk add --no-cache --virtual .fetch-deps \
-    bash \
-    binutils-gold \
-    curl \
-    g++ \
-    gcc \
-    git \
-    icu-dev \
-    linux-headers \
-    make \
-    python \
-    wget \
-    findutils
+# RUN set -ex && apk add --no-cache --virtual .fetch-deps \
+#     bash \
+#     binutils-gold \
+#     curl \
+#     g++ \
+#     gcc \
+#     git \
+#     icu-dev \
+#     linux-headers \
+#     make \
+#     python \
+#     wget \
+#     findutils
 
 
-RUN cd /pg-src/postgres/contrib/ \
-   && export DEPOT_TOOLS_WIN_TOOLCHAIN=0 \
-   && git clone -b v2.3.0 --depth=1 https://github.com/plv8/plv8 \
-   && cd plv8 \
-   && export PATH=/pg/bin:$PATH \
-   && export PG_CONFIG=/pg/bin/pg_config \
-   && make || make || make \
-   && make install
+# RUN cd /pg-src/postgres/contrib/ \
+#    && export DEPOT_TOOLS_WIN_TOOLCHAIN=0 \
+#    && git clone -b v2.3.0 --depth=1 https://github.com/plv8/plv8 \
+#    && cd plv8 \
+#    && export PATH=/pg/bin:$PATH \
+#    && export PG_CONFIG=/pg/bin/pg_config \
+#    && make || make || make \
+#    && make install
 
-RUN mkdir /data && chown postgres /data
+# RUN mkdir /data && chown postgres /data
 
 FROM alpine:3.7
 RUN apk --no-cache add ca-certificates python3 openssl libxml2 libxslt libedit curl bash su-exec  tzdata
