@@ -5,7 +5,7 @@ services:
 - docker
 - docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD";
 script:
-- v=`git rev-parse HEAD` && docker build -t aidbox/adb:$v . && docker push aidbox/adb:$v
+- v=`git rev-parse HEAD` && docker build -t aidbox/db:$v . && docker push aidbox/db:$v
 
 afrer_success: 
 env:
