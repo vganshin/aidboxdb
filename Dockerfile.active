@@ -1,0 +1,7 @@
+FROM aidbox/db:passive-latest
+
+COPY entry-point.sh /
+RUN chmod a+x /entry-point.sh
+
+ENTRYPOINT ["/entry-point.sh"]
+CMD ["postgres"]

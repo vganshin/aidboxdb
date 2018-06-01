@@ -3,11 +3,18 @@ dist: trusty
 language: generic
 services:
 - docker
-- docker login -u="$DOCKER_USER" -p="$DOCKER_PASSWORD";
-script:
-- v=`git rev-parse HEAD` && docker build -t aidbox/db:$v . && docker push aidbox/db:$v
 
-afrer_success: 
+script:
+- v=`git rev-parse --short HEAD` && docker build -t aidbox/db:passive-$v -t aidbox/db:passive-latest .
+- v=`git rev-parse --short HEAD` && docker build -t aidbox/db:$v -t aidbox/db:latest .
+
+afrer_success:
+- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+- docker push aidbox/db:$v
+- docker push aidbox/db:latest
+- docker push aidbox/db:$v-latest
+- docker push aidbox/db:passive-latest
+
 env:
   global:
   - secure: HqgXIY4z1wTfhoNxSXx0soodDeqrEXm5z0q8HVXeHaxHEsiXQoJ40UZ7MkiHWtyNNLzzy/EkcT6KaGIRbla1a+CuGeP13sXdqLUs4t819PHfQE84tOWh1VInB65IZq0zcgzhjmSE3Vl57+yPNHzcuzesXenjRQaP1uHnztLub8Ahl/fx0HzfUJs9eRZL9h5LI6BGzVbw5g/dMF0fpREXsMdZmYdLERpnEd4veXBHGweyusm0K8vJU7TLjagQJTnks6RCxfCFWffwavmZev7LcZEsXK5RHCKBGi7E4Hc7VOeoUS4fkkig4Ti56KYKg98/zw0d4/RTznIVQi6zo8cmXQafMrW04uMuMXsXnXCH8xaE3Gb8u42Ua2yNKJwZn41Xu0cLkpsZ+ZSjLrfoAgAT7spyTaOJE++jS7PKjhQeC6iXPq5gppPwHidzjLP8WznJtQgp5hyAZoF9+FTNKcx6aQ/bjKAJZLINkXvFAZ+rIoz1F0rLcZ82SMi7xCcRLIuY+iWJtf7zYOtca/J5Hm2y6Wp6q6xumnJblMAlY3GqVqRIynNZ3nOZYs/uE6FsukQP7oqORvyGVos2YbT9aZdYgucg+Ka2DAbFAW5OnTUvIu0TDDB+gZxdHrIRoS3qalpK00mwCsSQInlG9WhtYttFj3IsM6WU2/0klYfmMm4Uevo=

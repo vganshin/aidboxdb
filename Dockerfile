@@ -23,7 +23,7 @@ RUN set -ex \
     python-dev \
 		python3-dev \
 		git \
-		zlib-dev 
+		zlib-dev
 
 RUN mkdir /pg-src
 
@@ -116,7 +116,6 @@ RUN cd /pg-src/postgres/contrib/ \
 #     wget \
 #     findutils
 
-
 # RUN cd /pg-src/postgres/contrib/ \
 #    && export DEPOT_TOOLS_WIN_TOOLCHAIN=0 \
 #    && git clone -b v2.3.0 --depth=1 https://github.com/plv8/plv8 \
@@ -125,8 +124,6 @@ RUN cd /pg-src/postgres/contrib/ \
 #    && export PG_CONFIG=/pg/bin/pg_config \
 #    && make || make || make \
 #    && make install
-
-# RUN mkdir /data && chown postgres /data
 
 FROM alpine:3.7
 RUN apk --no-cache add ca-certificates python3 openssl libxml2 libxslt libedit curl bash su-exec  tzdata
@@ -140,11 +137,12 @@ ENV PATH /pg/bin:$PATH
 ENV PGDATA /data
 ENV LANG en_US.utf8
 
-COPY entry-point.sh /
-RUN chmod a+x /entry-point.sh
+# COPY entry-point.sh /
+# RUN chmod a+x /entry-point.sh
 
+RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA" # this 777 will be replaced by 700 at runtime (allows semi-arbitrary "--user" values)
 VOLUME /data
 
 ENV LD_LIBRARY_PATH /pg/lib
-ENTRYPOINT ["/entry-point.sh"]
+# ENTRYPOINT ["/entry-point.sh"]
 CMD ["postgres"]
