@@ -5,14 +5,14 @@ services:
 - docker
 
 script:
-- v=`git rev-parse --short HEAD` && docker build -t aidbox/db:passive-$v -t aidbox/db:passive-latest . --cache-from aidbox/db:0.1
-- v=`git rev-parse --short HEAD` && docker build -t aidbox/db:$v -t aidbox/db:latest . --cache-from aidbox/db:0.1
+- v=`git rev-parse --short HEAD` && docker build -t aidbox/db:passive-$v -t aidbox/db:passive-latest . --cache-from aidbox/db:latest
+- v=`git rev-parse --short HEAD` && docker build -f Dockerfile.active -t aidbox/db:$v -t aidbox/db:latest . --cache-from aidbox/db:latest
 
 after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
 - docker push aidbox/db:$v
 - docker push aidbox/db:latest
-- docker push aidbox/db:$v-latest
+- docker push aidbox/db:passive-$v
 - docker push aidbox/db:passive-latest
 
 env:
