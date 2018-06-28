@@ -144,5 +144,11 @@ RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PG
 VOLUME /data
 
 ENV LD_LIBRARY_PATH /pg/lib
+
+# https://git.alpinelinux.org/cgit/aports/commit/?id=d67ceb66a1ca9e1899071c9ef09fffba29fa0417
+# fix issue with 'FATAL:  could not load library "/pg/lib/postgresql/libpqwalreceiver.so": Error loading shared
+# library libpq.so.5: No such file or directory (needed by /pg/lib/postgresql/libpqwalreceiver.so)'
+RUN cp /pg/lib/libpq.so* /usr/lib/
+
 # ENTRYPOINT ["/entry-point.sh"]
 CMD ["postgres"]
