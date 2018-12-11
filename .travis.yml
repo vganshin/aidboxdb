@@ -4,14 +4,10 @@ language: generic
 services:
 - docker
 script:
-- v=`git rev-parse --short HEAD` && docker build -t aidbox/db:passive-$v -t aidbox/db:passive-latest . --cache-from aidbox/db:latest
-- v=`git rev-parse --short HEAD` && docker build -f Dockerfile.active -t aidbox/db:$v -t aidbox/db:latest . --cache-from aidbox/db:latest
+- make docker-build
 after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
-- docker push aidbox/db:$v
-- docker push aidbox/db:latest
-- docker push aidbox/db:passive-$v
-- docker push aidbox/db:passive-latest
+- make docker-push
 env:
   global:
   - secure: Lk0isZ42mRKOlNWHCrjtRYMpWin3r6k5F79V2HxxlmpYSGGYbK61nQzckTJJrGNwzf0pnKOjNe4h9tpKWdPjs2lDhf/muF065mmT3Tb5+ywff70171eROiaDNIsOGcV9W4tfZwb9lgjeSUYNC/nXwX+qtRqKjptJhWXgAdmMnUWlE0SgFlP8LzEX1A6FbIVM3cn6Sxmh0Q93pMMZ8oO3MyDIzLnXmsRoq2KsXIlYnswrU5l6qfYE7zcPuBP5c0ULScLIRQFSk/VUyLkqJkbx6CFuPZmkp8zGHye0eRjL/Xsu+8h7hXLZ329Y7YVbgTfDZghwO7bBAgUIahgVXsPmorsPJUKepy1XlOhIioD0hILKHonA4VwiDybY93rBVzHtKI2Km7FgADEfVWM/LLlsAxWyiQyVFGZYWyfiLesCUZiwez0LDBWf1nwYjUqiVTsvc+xS00CktV2Mzb7JAD39IjfW/uvNwBXkxYX7kAzkY+fUW2rNMTSHxp8b8GH8InCHIxrmMo08x//IwMHMaXF8JNGlcURZmf472jbmhufHbQ63ck8dmiKNlKMYgOM0b0yDmbXVoKyM8DXhfNwW7Gt4+VWdxWLrL8z1tvS2uZzNrdtCOpAsol5GoLm8CeFPhvSrIR5B/bRjhkGRrXCJp+dHXJfmxsRtqZNfxj6UiN4ZETI=
