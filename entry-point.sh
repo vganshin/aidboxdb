@@ -123,7 +123,7 @@ if [ "$1" = 'postgres' ] && [ "$(id -u)" = '0' ]; then
 	  chmod 700 /data
 
     echo "postgres & 0"
-    exec su-exec postgres "$@"
+    exec gosu postgres "$@"
 
 else
     exec "$@"

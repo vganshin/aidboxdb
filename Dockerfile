@@ -1,7 +1,9 @@
-FROM alpine:3.7 as builder
+FROM ubuntu as builder
+
+RUN apt update
 
 RUN set -ex \
-	&& apk add --no-cache --virtual .fetch-deps \
+	&& apt install -y \
 		ca-certificates \
 		openssl \
 		tar \
@@ -15,19 +17,18 @@ RUN set -ex \
 		libxml2-dev \
 		libxslt-dev \
 		make \
-		openssl-dev \
+    wget \
+    libssl-dev \
 		perl \
-    perl-ipc-run \
-		perl-dev \
-		util-linux-dev \
+    libperl-dev \
+    libipc-run-perl \
     python-dev \
 		python3-dev \
-		git \
-		zlib-dev
+		git
 
 RUN mkdir /pg-src
 
-RUN cd /pg-src && git clone --depth 1 -b REL_10_STABLE https://github.com/postgres/postgres
+RUN cd /pg-src && git clone --depth 1 -b REL_11_STABLE https://github.com/postgres/postgres
 
 # install OSSP uuid (http://www.ossp.org/pkg/lib/uuid/)
 ENV OSSP_UUID_VERSION 1.6.2
@@ -77,13 +78,10 @@ RUN cd /pg-src/postgres && \
     && make -j 4 world || echo 'ups' \
     && make install
 
-#		--enable-debug \
-#		--with-pam \
-
 RUN cd /pg-src/postgres && make -C contrib install
 
 RUN cd /pg-src/postgres/contrib/ \
-   && git clone -b filtering https://github.com/postgrespro/jsquery \
+   && git clone https://github.com/postgrespro/jsquery \
    && cd jsquery \
    && make \
    && make install
@@ -102,53 +100,60 @@ RUN cd /pg-src/postgres/contrib/ \
    && make \
    && make install
 
-# RUN set -ex && apk add --no-cache --virtual .fetch-deps \
-#     bash \
-#     binutils-gold \
-#     curl \
-#     g++ \
-#     gcc \
-#     git \
-#     icu-dev \
-#     linux-headers \
-#     make \
-#     python \
-#     wget \
-#     findutils
+RUN set -ex && apt install -y \
+    bash \
+    binutils-gold \
+    curl \
+    g++ \
+    gcc \
+    git \
+    libicu-dev \
+    linux-headers-generic \
+    make \
+    python \
+    pkg-config \
+    wget \
+    findutils \
+    libc++-dev \
+    libc++abi-dev
 
-# RUN cd /pg-src/postgres/contrib/ \
-#    && export DEPOT_TOOLS_WIN_TOOLCHAIN=0 \
-#    && git clone -b v2.3.0 --depth=1 https://github.com/plv8/plv8 \
-#    && cd plv8 \
-#    && export PATH=/pg/bin:$PATH \
-#    && export PG_CONFIG=/pg/bin/pg_config \
-#    && make || make || make \
-#    && make install
+RUN cd /pg-src/postgres/contrib/ \
+   && git config --global user.email "you@example.com" \
+   && git config --global user.name "Your Name" \
+   && git clone --depth=1 https://github.com/plv8/plv8 \
+   && cd plv8 \
+   && export PATH=/pg/bin:$PATH \
+   && export PG_CONFIG=/pg/bin/pg_config \
+   && make \
+   && make install
 
-FROM alpine:3.7
-RUN apk --no-cache add ca-certificates python3 openssl libxml2 libxslt libedit curl bash su-exec  tzdata
+FROM ubuntu
+
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+libc++-dev libxml2 libedit-dev openssl tzdata locales gosu \
+&& rm -rf /var/lib/apt/lists/*
+
+
 WORKDIR /pg
-# RUN mkdir /data && chown postgres /data
+
 COPY --from=builder /pg /pg
 
-# RUN /pg/bin/initdb -D /data
+RUN locale-gen en_US.UTF-8
 
 ENV PATH /pg/bin:$PATH
 ENV PGDATA /data
 ENV LANG en_US.utf8
 
-# COPY entry-point.sh /
-# RUN chmod a+x /entry-point.sh
+RUN adduser postgres \
+--system \
+--shell /bin/sh \
+--group \
+--disabled-password
 
 RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA" # this 777 will be replaced by 700 at runtime (allows semi-arbitrary "--user" values)
 VOLUME /data
 
 ENV LD_LIBRARY_PATH /pg/lib
-
-# https://git.alpinelinux.org/cgit/aports/commit/?id=d67ceb66a1ca9e1899071c9ef09fffba29fa0417
-# fix issue with 'FATAL:  could not load library "/pg/lib/postgresql/libpqwalreceiver.so": Error loading shared
-# library libpq.so.5: No such file or directory (needed by /pg/lib/postgresql/libpqwalreceiver.so)'
-RUN cp /pg/lib/libpq.so* /usr/lib/
 
 # ENTRYPOINT ["/entry-point.sh"]
 CMD ["postgres"]
