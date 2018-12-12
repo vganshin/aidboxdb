@@ -1,4 +1,4 @@
-FROM ubuntu as builder
+FROM ubuntu:disco as builder
 
 RUN apt update
 
@@ -24,7 +24,8 @@ RUN set -ex \
     libipc-run-perl \
     python-dev \
 		python3-dev \
-		git
+		git \
+    zlib1g-dev
 
 RUN mkdir /pg-src
 
@@ -117,22 +118,55 @@ RUN set -ex && apt install -y \
     libc++-dev \
     libc++abi-dev
 
-RUN cd /pg-src/postgres/contrib/ \
-   && git config --global user.email "you@example.com" \
-   && git config --global user.name "Your Name" \
-   && git clone --depth=1 https://github.com/plv8/plv8 \
-   && cd plv8 \
-   && export PATH=/pg/bin:$PATH \
-   && export PG_CONFIG=/pg/bin/pg_config \
-   && make \
-   && make install
+  RUN cd /pg-src/postgres/contrib/ \
+    && git config --global user.email "you@example.com" \
+    && git config --global user.name "Your Name" \
+    && git clone --depth=1 https://github.com/plv8/plv8 \
+    && cd plv8 \
+    && export PATH=/pg/bin:$PATH \
+    && export PG_CONFIG=/pg/bin/pg_config \
+    && make \
+    && make install
 
-FROM ubuntu
+# RUN apt-get install -y build-essential libxml2-dev libgdal-dev libproj-dev libjson-c-dev xsltproc docbook-xsl docbook-mathml imagemagick
+
+# RUN cd /pg-src/postgres/contrib/ \
+#    && wget -P ./ http://download.osgeo.org/geos/geos-3.7.1.tar.bz2 \
+#    && tar xfj geos-3.7.1.tar.bz2 \
+#    && cd geos-3.7.1 \
+#    && ./configure --prefix=/pg \
+#    && make \
+#    && make install \
+#    && cd ..
+
+
+# RUN cd /pg-src/postgres/contrib/ \
+#    && export PG_CONFIG=/pg/bin/pg_config \
+#    && wget https://download.osgeo.org/postgis/source/postgis-2.5.0.tar.gz \
+#    && tar xfz postgis-2.5.0.tar.gz \
+#    && cd postgis-2.5.0 \
+#    && ./configure \
+#    && make \
+#    && make install \
+#    && ldconfig 
+#   make comments-install
+
+ RUN cd /pg-src/postgres/contrib/ \
+     && git clone https://github.com/postgrespro/rum \
+     && cd rum \
+     && export PATH=/pg/bin:$PATH \
+     && export PG_CONFIG=/pg/bin/pg_config \
+     && make USE_PGXS=1 \
+     && make USE_PGXS=1 install
+
+
+FROM ubuntu:disco
+
 
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-libc++-dev libxml2 libedit-dev openssl tzdata locales gosu \
-&& rm -rf /var/lib/apt/lists/*
-
+    libc++-dev libxml2 libedit-dev openssl tzdata locales gosu \
+    # libjson-c-dev libproj-dev libgdal-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /pg
 
