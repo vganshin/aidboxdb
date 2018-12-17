@@ -82,12 +82,15 @@ if [ ! -s "/data/PG_VERSION" ]; then
     { echo; echo "host all all all $authMethod"; } | tee -a "$PGDATA/pg_hba.conf" > /dev/null
     { echo; echo "host replication postgres 0.0.0.0/0 $authMethod"; } | tee -a "$PGDATA/pg_hba.conf" > /dev/null
 
+    { echo; echo "listen_addresses = '*'"; } | tee -a "$PGDATA/postgresql.conf" > /dev/null
+
+
     su - postgres -c 'export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D /data  -w start'
     su - postgres -c 'export LD_LIBRARY_PATH=/pg/lib && /pg/bin/createuser -s root'
 
     echo "ALTER USER postgres WITH SUPERUSER $pass" | /pg/bin/psql postgres
 
-    if [ -n "$POSTGRES_DB" ]; then
+    if [ -n "$POSTGRES_DB"  ] && [ "$POSTGRES_DB" != 'postgres']; then
         /pg/bin/psql postgres -c "create database $POSTGRES_DB"
     fi
 
