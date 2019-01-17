@@ -90,7 +90,7 @@ if [ ! -s "/data/PG_VERSION" ]; then
 
     echo "ALTER USER postgres WITH SUPERUSER $pass" | /pg/bin/psql postgres
 
-    if [ -n "$POSTGRES_DB"  ] && [ "$POSTGRES_DB" != 'postgres']; then
+    if [ -n "$POSTGRES_DB"  ] && [ "$POSTGRES_DB" != 'postgres' ]; then
         /pg/bin/psql postgres -c "create database $POSTGRES_DB"
     fi
 
