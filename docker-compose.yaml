@@ -1,0 +1,12 @@
+version: '3.1'
+services:
+  aidbox-db:
+    image: "aidbox/db:${IMAGE_TAG}"
+    volumes:
+    - "./pgdata:/data"
+    environment:
+      POSTGRES_USER:     "postgres"
+      POSTGRES_PORT:     "5432"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB:       "devbox"
+      POSTGRES_DATABASE: "devbox"

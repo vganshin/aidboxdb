@@ -29,7 +29,8 @@ RUN set -ex \
 
 RUN mkdir /pg-src
 
-RUN cd /pg-src && git clone --depth 1 -b REL_11_STABLE https://github.com/postgres/postgres
+RUN echo 1
+RUN cd /pg-src && git clone --depth 1 -b REL_11_STABLE https://github.com/niquola/postgres-1 postgres
 
 # install OSSP uuid (http://www.ossp.org/pkg/lib/uuid/)
 ENV OSSP_UUID_VERSION 1.6.2
@@ -154,6 +155,7 @@ RUN set -ex && apt install -y \
  RUN cd /pg-src/postgres/contrib/ \
      && git clone https://github.com/postgrespro/rum \
      && cd rum \
+     && git checkout stable \
      && export PATH=/pg/bin:$PATH \
      && export PG_CONFIG=/pg/bin/pg_config \
      && make USE_PGXS=1 \
@@ -164,7 +166,7 @@ FROM ubuntu:disco
 
 
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-    libc++-dev libxml2 libedit-dev openssl tzdata locales gosu \
+    libc++-dev libxml2 libedit-dev openssl tzdata locales \
     # libjson-c-dev libproj-dev libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -178,13 +180,13 @@ ENV PATH /pg/bin:$PATH
 ENV PGDATA /data
 ENV LANG en_US.utf8
 
-RUN adduser postgres \
---system \
---shell /bin/sh \
---group \
---disabled-password
+# RUN adduser postgres \
+# --system \
+# --shell /bin/sh \
+# --group \
+# --disabled-password
 
-RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA" # this 777 will be replaced by 700 at runtime (allows semi-arbitrary "--user" values)
+# RUN mkdir -p "$PGDATA" && chown -R postgres:postgres "$PGDATA" && chmod 777 "$PGDATA" # this 777 will be replaced by 700 at runtime (allows semi-arbitrary "--user" values)
 VOLUME /data
 
 ENV LD_LIBRARY_PATH /pg/lib

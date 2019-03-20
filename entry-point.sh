@@ -68,10 +68,10 @@ if [ ! -s "/data/PG_VERSION" ]; then
 
     mkdir -p /data
     chmod 700 /data
-    chown -R postgres /data
+    # chown -R postgres /data
 
     file_env 'POSTGRES_INITDB_ARGS'
-    su - postgres -c "export LD_LIBRARY_PATH=/pg/lib && /pg/bin/initdb --data-checksums -E 'UTF-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8' -D /data"
+    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/initdb --data-checksums -E 'UTF-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8' -D /data
 
     # check password first so we can output the warning before postgres
     # messes it up
@@ -85,10 +85,10 @@ if [ ! -s "/data/PG_VERSION" ]; then
     { echo; echo "listen_addresses = '*'"; } | tee -a "$PGDATA/postgresql.conf" > /dev/null
 
 
-    su - postgres -c 'export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D /data  -w start'
-    su - postgres -c 'export LD_LIBRARY_PATH=/pg/lib && /pg/bin/createuser -s root'
+    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D /data  -w start
+    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/createuser -s postgres
 
-    echo "ALTER USER postgres WITH SUPERUSER $pass" | /pg/bin/psql postgres
+    echo "ALTER USER root WITH SUPERUSER $pass" | /pg/bin/psql postgres
 
     if [ -n "$POSTGRES_DB"  ] && [ "$POSTGRES_DB" != 'postgres' ]; then
         /pg/bin/psql postgres -c "create database $POSTGRES_DB"
@@ -107,9 +107,8 @@ if [ ! -s "/data/PG_VERSION" ]; then
         max_wal_size = '4GB'
 CONF
 
-    chown postgres:postgres /data/postgresql.conf
 
-    su - postgres -c 'export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D /data -m fast -w stop'
+    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D /data -m fast -w stop
 
     echo
     echo 'PostgreSQL init process complete; ready for start up.'
@@ -119,15 +118,9 @@ CONF
 fi
 
 
-# allow the container to be started with `--user`
-if [ "$1" = 'postgres' ] && [ "$(id -u)" = '0' ]; then
-	  mkdir -p /data
-	  chown -R postgres /data
-	  chmod 700 /data
+mkdir -p /data
+chmod 700 /data
 
-    echo "postgres & 0"
-    exec gosu postgres "$@"
+echo "postgres"
+exec postgres
 
-else
-    exec "$@"
-fi

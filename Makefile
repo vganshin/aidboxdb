@@ -1,4 +1,5 @@
-IMAGE_TAG  ?= $(shell git describe --tags 2> /dev/null || git rev-parse --short HEAD)
+# IMAGE_TAG  ?= $(shell git describe --tags 2> /dev/null || git rev-parse --short HEAD)
+IMAGE_TAG  = $(shell cat VERSION)
 
 docker-run:
 	docker run --rm -it aidbox/db:latest bash
@@ -12,3 +13,12 @@ docker-push:
 	docker push aidbox/db:latest
 	docker push aidbox/db:passive-${IMAGE_TAG}
 	docker push aidbox/db:passive-latest
+
+up:
+	env IMAGE_TAG=${IMAGE_TAG} docker-compose up -d
+
+down:
+	env IMAGE_TAG=${IMAGE_TAG} docker-compose down
+
+psql:
+	docker-compose exec aidbox-db psql postgres
