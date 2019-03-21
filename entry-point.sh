@@ -105,6 +105,15 @@ if [ ! -s "/data/PG_VERSION" ]; then
         max_wal_senders = 30
         max_replication_slots = 30
         max_wal_size = '4GB'
+     
+        shared_preload_libraries = 'pg_stat_statements'   # change requires DB restart.
+        pg_stat_statements.max = 500
+        pg_stat_statements.track = top
+        pg_stat_statements.track_utility = true
+        pg_stat_statements.save = false
+
+        # #Also consider enabling io timing traction by uncommenting this:
+        track_io_timing = on
 CONF
 
 
@@ -120,6 +129,12 @@ fi
 
 mkdir -p /data
 chmod 700 /data
+if [ -O /data ]; then
+    echo 'Owned by right user!';
+else
+    echo "Change to root"
+    chown -R root /data;
+fi
 
 echo "postgres"
 exec postgres
