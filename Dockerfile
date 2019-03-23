@@ -161,12 +161,24 @@ RUN set -ex && apt install -y \
      && make USE_PGXS=1 \
      && make USE_PGXS=1 install
 
+RUN cd /pg-src/postgres/contrib/ \
+    && git clone --depth 1 -b master https://github.com/pipelinedb/pipelinedb \
+    && apt-get install -y libzmq5 libzmq5-dev \
+    && cd /pg-src/postgres/contrib/pipelinedb \
+    && cat Makefile \
+    && sed -i 's|/usr/lib/libzmq.a|-lzmq|g' Makefile \
+    && cat Makefile \
+    && export PATH=/pg/bin:$PATH \
+    && export PG_CONFIG=/pg/bin/pg_config \
+    && make USE_PGXS=1 \
+    && make USE_PGXS=1 install
+
 
 FROM ubuntu:disco
 
 
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-    libc++-dev libxml2 libedit-dev openssl tzdata locales \
+    libc++-dev libxml2 libedit-dev openssl tzdata locales libzmq5 \
     # libjson-c-dev libproj-dev libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
 

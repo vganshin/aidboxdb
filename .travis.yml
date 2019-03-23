@@ -4,7 +4,7 @@ language: generic
 services:
 - docker
 script:
-- make docker-build
+- make build
 after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
 - make docker-push

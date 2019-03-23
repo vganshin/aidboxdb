@@ -106,7 +106,8 @@ if [ ! -s "/data/PG_VERSION" ]; then
         max_replication_slots = 30
         max_wal_size = '4GB'
      
-        shared_preload_libraries = 'pg_stat_statements'   # change requires DB restart.
+        shared_preload_libraries = 'pg_stat_statements, pipelinedb'
+        max_worker_processes = 128
         pg_stat_statements.max = 500
         pg_stat_statements.track = top
         pg_stat_statements.track_utility = true
