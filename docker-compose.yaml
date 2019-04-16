@@ -5,8 +5,6 @@ services:
     volumes:
     - "./pgdata:/data"
     environment:
-      POSTGRES_USER:     "postgres"
-      POSTGRES_PORT:     "5432"
-      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_USER:     "mostgres"
+      POSTGRES_PASSWORD: "mostgres"
       POSTGRES_DB:       "devbox"
-      POSTGRES_DATABASE: "devbox"

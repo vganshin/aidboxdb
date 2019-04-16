@@ -37,6 +37,9 @@ NODE_NAME=$PG_REPLICA
 
 if [ ! -s "/data/PG_VERSION" ]; then
 
+    mkdir -p /data
+    chmod 700 /data
+
     if [ "$PG_ROLE" = 'replica' ]; then
 
         echo "$PG_MASTER_HOST:5432:*:postgres:$POSTGRES_PASSWORD" > ~/.pgpass
@@ -80,15 +83,18 @@ if [ ! -s "/data/PG_VERSION" ]; then
     authMethod=md5
 
     { echo; echo "host all all all $authMethod"; } | tee -a "$PGDATA/pg_hba.conf" > /dev/null
-    { echo; echo "host replication postgres 0.0.0.0/0 $authMethod"; } | tee -a "$PGDATA/pg_hba.conf" > /dev/null
+    { echo; echo "host replication $POSTGRES_USER 0.0.0.0/0 $authMethod"; } | tee -a "$PGDATA/pg_hba.conf" > /dev/null
 
     { echo; echo "listen_addresses = '*'"; } | tee -a "$PGDATA/postgresql.conf" > /dev/null
 
 
     export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D /data  -w start
-    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/createuser -s postgres
 
-    echo "ALTER USER root WITH SUPERUSER $pass" | /pg/bin/psql postgres
+    if [ -n "$POSTGRES_USER" ]; then
+        export LD_LIBRARY_PATH=/pg/lib && /pg/bin/createuser -s $POSTGRES_USER
+        echo "ALTER USER $POSTGRES_USER WITH SUPERUSER $pass" | /pg/bin/psql postgres
+    fi
+
 
     if [ -n "$POSTGRES_DB"  ] && [ "$POSTGRES_DB" != 'postgres' ]; then
         /pg/bin/psql postgres -c "create database $POSTGRES_DB"
@@ -105,8 +111,7 @@ if [ ! -s "/data/PG_VERSION" ]; then
         max_wal_senders = 30
         max_replication_slots = 30
         max_wal_size = '4GB'
-     
-        shared_preload_libraries = 'pg_stat_statements, pipelinedb'
+        shared_preload_libraries = 'pg_stat_statements'
         max_worker_processes = 128
         pg_stat_statements.max = 500
         pg_stat_statements.track = top
@@ -125,17 +130,15 @@ CONF
     echo
 
   fi
-fi
-
-
-mkdir -p /data
-chmod 700 /data
-if [ -O /data ]; then
-    echo 'Owned by right user!';
 else
-    echo "Change to root"
-    chown -R root /data;
+   if [ -O /data ]; then
+        echo 'Owned by right user!';
+    else
+        echo "Change to root"
+        chown -R root /data;
+    fi
 fi
+
 
 echo "postgres"
 exec postgres
