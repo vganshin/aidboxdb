@@ -29,16 +29,16 @@ if [ "${1:0:1}" = '-' ]; then
 fi
 
 
-PGDATA=/data
+PGDATA="${PGDATA:-/data}"
 
 NUM_ATTEMPTS=20
 NODE_NAME=$PG_REPLICA
 
 
-if [ ! -s "/data/PG_VERSION" ]; then
+if [ ! -s "$PGDATA/PG_VERSION" ]; then
 
-    mkdir -p /data
-    chmod 700 /data
+    mkdir -p $PGDATA
+    chmod 700 $PGDATA
 
     if [ "$PG_ROLE" = 'replica' ]; then
 
@@ -48,7 +48,7 @@ if [ ! -s "/data/PG_VERSION" ]; then
         n=0
         until [ $n -ge $NUM_ATTEMPTS ]
         do
-            pg_basebackup -D /data -Fp -U postgres -w -R -Xs -c fast -l 'clone'  -P -v -h $PG_MASTER_HOST -U postgres  && export RESTORED=1 && break
+            pg_basebackup -D $PGDATA -Fp -U postgres -w -R -Xs -c fast -l 'clone'  -P -v -h $PG_MASTER_HOST -U postgres  && export RESTORED=1 && break
             n=$[$n+1]
             echo "Not ready; Sleep $n"
             sleep $n
@@ -58,10 +58,10 @@ if [ ! -s "/data/PG_VERSION" ]; then
 
         echo "restored: $RESTORED"
 
-        echo 'hot_standby = on' >> /data/postgresql.conf
-        echo 'port = 5432' >> /data/postgresql.conf
-        echo "primary_slot_name = '$NODE_NAME'" >> /data/recovery.conf
-        echo "standby_mode = 'on'" >> /data/recovery.conf
+        echo 'hot_standby = on' >> $PGDATA/postgresql.conf
+        echo 'port = 5432' >> $PGDATA/postgresql.conf
+        echo "primary_slot_name = '$NODE_NAME'" >> $PGDATA/recovery.conf
+        echo "standby_mode = 'on'" >> $PGDATA/recovery.conf
 
 	      echo
 	      echo 'PostgreSQL clone process complete; ready for start up.'
@@ -69,12 +69,12 @@ if [ ! -s "/data/PG_VERSION" ]; then
 
   else
 
-    mkdir -p /data
-    chmod 700 /data
-    # chown -R postgres /data
+    mkdir -p $PGDATA
+    chmod 700 $PGDATA
+    # chown -R postgres $PGDATA
 
     file_env 'POSTGRES_INITDB_ARGS'
-    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/initdb --data-checksums -E 'UTF-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8' -D /data
+    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/initdb --data-checksums -E 'UTF-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8' -D $PGDATA
 
     # check password first so we can output the warning before postgres
     # messes it up
@@ -88,7 +88,7 @@ if [ ! -s "/data/PG_VERSION" ]; then
     { echo; echo "listen_addresses = '*'"; } | tee -a "$PGDATA/postgresql.conf" > /dev/null
 
 
-    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D /data  -w start
+    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D $PGDATA  -w start
 
     if [ -n "$POSTGRES_USER" ]; then
         export LD_LIBRARY_PATH=/pg/lib && /pg/bin/createuser -s $POSTGRES_USER
@@ -102,7 +102,7 @@ if [ ! -s "/data/PG_VERSION" ]; then
 
     # shared_preload_libraries='pg_pathman'
     # Some tweaks to default configuration
-    cat <<-CONF >> /data/postgresql.conf
+    cat <<-CONF >> $PGDATA/postgresql.conf
         listen_addresses = '*'
         synchronous_commit = off
         shared_buffers = '2GB'
@@ -123,7 +123,7 @@ if [ ! -s "/data/PG_VERSION" ]; then
 CONF
 
 
-    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D /data -m fast -w stop
+    export LD_LIBRARY_PATH=/pg/lib && /pg/bin/pg_ctl -D $PGDATA -m fast -w stop
 
     echo
     echo 'PostgreSQL init process complete; ready for start up.'
@@ -131,11 +131,11 @@ CONF
 
   fi
 else
-   if [ -O /data ]; then
+   if [ -O $PGDATA ]; then
         echo 'Owned by right user!';
     else
         echo "Change to root"
-        chown -R root /data;
+        chown -R root $PGDATA;
     fi
 fi
 
