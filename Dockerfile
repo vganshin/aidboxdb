@@ -30,7 +30,7 @@ RUN set -ex \
 RUN mkdir /pg-src
 
 RUN echo 1
-RUN cd /pg-src && git clone --depth 1 -b REL_11_STABLE https://github.com/niquola/postgres-1 postgres
+RUN cd /pg-src && git clone --depth 1 -b actual https://github.com/niquola/postgres-1 postgres
 
 # install OSSP uuid (http://www.ossp.org/pkg/lib/uuid/)
 ENV OSSP_UUID_VERSION 1.6.2
@@ -72,6 +72,7 @@ RUN cd /pg-src/postgres && \
       --disable-rpath \
       --with-gnu-ld \
       --with-pgport=5432 \
+      --with-blocksize=32 \
   		--with-perl \
       --with-openssl \
       --with-libxml \
@@ -88,6 +89,23 @@ RUN cd /pg-src/postgres/contrib/ \
    && make \
    && make install
 
+RUN set -ex && apt update && apt install -y \
+  bash \
+  binutils-gold \
+  curl \
+  g++ \
+  gcc \
+  git \
+  libicu-dev \
+  linux-headers-generic \
+  make \
+  python \
+  pkg-config \
+  wget \
+  findutils \
+  libc++-dev \
+  libc++abi-dev
+
 RUN cd /pg-src/postgres/contrib/ \
    && git clone https://github.com/eulerto/wal2json.git \
    && cd wal2json \
@@ -95,39 +113,33 @@ RUN cd /pg-src/postgres/contrib/ \
    && make \
    && make install
 
+  RUN cd /pg-src/postgres/contrib/ \
+  && git clone https://github.com/postgrespro/rum \
+  && cd rum \
+  && git checkout stable \
+  && export PATH=/pg/bin:$PATH \
+  && export PG_CONFIG=/pg/bin/pg_config \
+  && make USE_PGXS=1 \
+  && make USE_PGXS=1 install
+
 RUN cd /pg-src/postgres/contrib/ \
    && git clone https://github.com/niquola/jsonknife \
    && cd jsonknife \
+   && git log -n 5 \
    && PATH=/pg/bin:$PATH \
    && make \
    && make install
 
-RUN set -ex && apt install -y \
-    bash \
-    binutils-gold \
-    curl \
-    g++ \
-    gcc \
-    git \
-    libicu-dev \
-    linux-headers-generic \
-    make \
-    python \
-    pkg-config \
-    wget \
-    findutils \
-    libc++-dev \
-    libc++abi-dev
 
-  RUN cd /pg-src/postgres/contrib/ \
-    && git config --global user.email "you@example.com" \
-    && git config --global user.name "Your Name" \
-    && git clone --depth=1 https://github.com/plv8/plv8 \
-    && cd plv8 \
-    && export PATH=/pg/bin:$PATH \
-    && export PG_CONFIG=/pg/bin/pg_config \
-    && make \
-    && make install
+# RUN cd /pg-src/postgres/contrib/ \
+#   && git config --global user.email "you@example.com" \
+#   && git config --global user.name "Your Name" \
+#   && git clone --depth=1 https://github.com/plv8/plv8 \
+#   && cd plv8 \
+#   && export PATH=/pg/bin:$PATH \
+#   && export PG_CONFIG=/pg/bin/pg_config \
+#   && make \
+#   && make install
 
 # RUN apt-get install -y build-essential libxml2-dev libgdal-dev libproj-dev libjson-c-dev xsltproc docbook-xsl docbook-mathml imagemagick
 
@@ -152,14 +164,6 @@ RUN set -ex && apt install -y \
 #    && ldconfig 
 #   make comments-install
 
- RUN cd /pg-src/postgres/contrib/ \
-     && git clone https://github.com/postgrespro/rum \
-     && cd rum \
-     && git checkout stable \
-     && export PATH=/pg/bin:$PATH \
-     && export PG_CONFIG=/pg/bin/pg_config \
-     && make USE_PGXS=1 \
-     && make USE_PGXS=1 install
 
 # RUN cd /pg-src/postgres/contrib/ \
 #     && git clone --depth 1 -b master https://github.com/pipelinedb/pipelinedb \

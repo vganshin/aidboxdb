@@ -12,9 +12,9 @@ build:
 
 publish:
 	docker push aidbox/db:${IMAGE_TAG}
-	docker push aidbox/db:latest
+	# docker push aidbox/db:latest
 	docker push aidbox/db:passive-${IMAGE_TAG}
-	docker push aidbox/db:passive-latest
+	# docker push aidbox/db:passive-latest
 
 up:
 	env IMAGE_TAG=${IMAGE_TAG} docker-compose up -d
