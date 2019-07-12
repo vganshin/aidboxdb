@@ -29,7 +29,7 @@ RUN set -ex \
 
 RUN mkdir /pg-src
 
-RUN echo 1
+RUN echo 2
 RUN cd /pg-src && git clone --depth 1 -b actual https://github.com/niquola/postgres-1 postgres
 
 # install OSSP uuid (http://www.ossp.org/pkg/lib/uuid/)
@@ -72,7 +72,7 @@ RUN cd /pg-src/postgres && \
       --disable-rpath \
       --with-gnu-ld \
       --with-pgport=5432 \
-      --with-blocksize=32 \
+      # --with-blocksize=32 \
   		--with-perl \
       --with-openssl \
       --with-libxml \
@@ -125,6 +125,7 @@ RUN cd /pg-src/postgres/contrib/ \
 RUN cd /pg-src/postgres/contrib/ \
    && git clone https://github.com/niquola/jsonknife \
    && cd jsonknife \
+   && echo 1 \
    && git log -n 5 \
    && PATH=/pg/bin:$PATH \
    && make \
