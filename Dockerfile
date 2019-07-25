@@ -125,7 +125,7 @@ RUN cd /pg-src/postgres/contrib/ \
 RUN cd /pg-src/postgres/contrib/ \
    && git clone https://github.com/niquola/jsonknife \
    && cd jsonknife \
-   && echo 1 \
+   && echo 2 \
    && git log -n 5 \
    && PATH=/pg/bin:$PATH \
    && make \
