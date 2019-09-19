@@ -1,0 +1,7 @@
+FROM aidbox/db:walg-latest
+
+ENV LD_LIBRARY_PATH /pg/lib
+
+COPY warm.sh /
+RUN chmod u+x /warm.sh
+ENTRYPOINT ["/warm.sh"]

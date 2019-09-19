@@ -7,7 +7,7 @@ script:
 - make build
 after_success:
 - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
-- make docker-push
+- echo "do nothing"
 env:
   global:
   - secure: Lk0isZ42mRKOlNWHCrjtRYMpWin3r6k5F79V2HxxlmpYSGGYbK61nQzckTJJrGNwzf0pnKOjNe4h9tpKWdPjs2lDhf/muF065mmT3Tb5+ywff70171eROiaDNIsOGcV9W4tfZwb9lgjeSUYNC/nXwX+qtRqKjptJhWXgAdmMnUWlE0SgFlP8LzEX1A6FbIVM3cn6Sxmh0Q93pMMZ8oO3MyDIzLnXmsRoq2KsXIlYnswrU5l6qfYE7zcPuBP5c0ULScLIRQFSk/VUyLkqJkbx6CFuPZmkp8zGHye0eRjL/Xsu+8h7hXLZ329Y7YVbgTfDZghwO7bBAgUIahgVXsPmorsPJUKepy1XlOhIioD0hILKHonA4VwiDybY93rBVzHtKI2Km7FgADEfVWM/LLlsAxWyiQyVFGZYWyfiLesCUZiwez0LDBWf1nwYjUqiVTsvc+xS00CktV2Mzb7JAD39IjfW/uvNwBXkxYX7kAzkY+fUW2rNMTSHxp8b8GH8InCHIxrmMo08x//IwMHMaXF8JNGlcURZmf472jbmhufHbQ63ck8dmiKNlKMYgOM0b0yDmbXVoKyM8DXhfNwW7Gt4+VWdxWLrL8z1tvS2uZzNrdtCOpAsol5GoLm8CeFPhvSrIR5B/bRjhkGRrXCJp+dHXJfmxsRtqZNfxj6UiN4ZETI=

@@ -8,13 +8,22 @@ docker-run:
 
 build:
 	docker build -t aidbox/db:passive-latest -t aidbox/db:passive-${IMAGE_TAG} .
+	docker build -f Dockerfile.walg -t aidbox/db:walg-${IMAGE_TAG} -t aidbox/db:walg-latest .
+	docker build -f Dockerfile.warm -t aidbox/db:warm-${IMAGE_TAG} -t aidbox/db:warm-latest .
 	docker build -f Dockerfile.active -t aidbox/db:${IMAGE_TAG} -t aidbox/db:latest .
 
 publish:
 	docker push aidbox/db:${IMAGE_TAG}
-	# docker push aidbox/db:latest
+	docker push aidbox/db:latest
+
+	docker push aidbox/db:walg-${IMAGE_TAG}
+	docker push aidbox/db:walg-latest
+
+	docker push aidbox/db:warm-${IMAGE_TAG}
+	docker push aidbox/db:warm-latest
+
 	docker push aidbox/db:passive-${IMAGE_TAG}
-	# docker push aidbox/db:passive-latest
+	docker push aidbox/db:passive-latest
 
 up:
 	env IMAGE_TAG=${IMAGE_TAG} docker-compose up -d

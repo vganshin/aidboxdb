@@ -1,0 +1,12 @@
+version: '3.1'
+services:
+  phyl-db:
+    # image: "aidbox/db:${IMAGE_TAG}"
+    image: "aidbox/db:warm-latest"
+    ports:
+      - "5444:5432"
+    volumes:
+    - "./pgdata:/data"
+    - "./secrets:/secrets"
+    environment:
+      WALG_GS_PREFIX: 'gs://aidbox-pg3/db1' 

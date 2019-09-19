@@ -183,7 +183,7 @@ FROM ubuntu:disco
 
 
 RUN apt update && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-    libc++-dev libxml2 libedit-dev openssl tzdata locales libzmq5 \
+    libc++-dev libxml2 libedit-dev openssl tzdata locales libzmq5 liblzo2-dev \
     # libjson-c-dev libproj-dev libgdal-dev \
     && rm -rf /var/lib/apt/lists/*
 

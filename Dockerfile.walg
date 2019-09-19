@@ -1,0 +1,6 @@
+FROM aidbox/db:passive-latest
+
+RUN apt-get update  -qq && apt-get install -qqy curl
+RUN curl -L https://github.com/wal-g/wal-g/releases/download/v0.2.9/wal-g.linux-amd64-lzo.tar.gz > /pg/wal-g.tar.gz
+RUN cd /pg && tar -zxvf wal-g.tar.gz && mv wal-g bin/
+RUN wal-g -h
